@@ -1,27 +1,23 @@
-RibbonMenu
+FlyInMenu
 ==========
 
-Navigation menu for Android (based on Google+ app).
+Implementation of the emerging fly-in menu pattern for Android apps. This utilises a high-level modification of the application window to add the fly-in menu (FIM), which is loaded from a menu resource.
 
-![RibbonMenu](https://github.com/darvds/RibbonMenu/raw/master/rbm1.png)
+This implementation is based on RibbonMenu (Copyright David Scott), but much expanded. It includes support for SearchViews and custom views, improved animations (with two different styles) and is cleaner to use.
 
 
 Usage
 =====
 
-Menus are created in xml as normal, adding text and an icon.
+Set your activity to override one of the FlyInMenuActivities (there is one for ActionBarSherlock users and one for the support library's FragmentActivity), you can load the FIM at any time by calling `loadFlyInMenu(..)`, after which you can attach custom views (`getFlyInMenu().setCustomView(..)`) or initalise a SearchView (`getFlyInMenu().enableSearchView()`).
 
-In the layout you want to show the menu, add a FrameLayout as the root layout and add the RibbonMenuView set with width and height to match_parent.
-
-In your class you need to implement the iRibbonMenuCallback interface. This is called when you click a menu item and it passes the menu item id from the xml. You then make a reference to the RibbonMenuView and set the callback, set the menu items and add toggleMenu() to your android.R.id.home in your onOptionsItemSelected
-
-The sample activity shows how it should all work.
+The fly-in animation can be one of two options set using `setFlyInType(..)`. `FLY_IN_OVER_ACTIVITY` brings the fly-in menu over the Activity, obscuring it. `FLY_IN_WITH_ACTIVITY` pushes the Activity's contents to the right.
 
 
 License
 =======
 
-Copyright 2012 David Scott
+Copyright 2012 Alex Curran, David Scott in parts
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
