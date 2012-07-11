@@ -14,8 +14,8 @@ Basic usage
 Set your activity to override `FlyInFragmentActivity`. You can load the FIM at any time by calling `loadFlyInMenu(..)`, after which you can attach custom views (`getFlyInMenu().setCustomView(..)`) or initalise a SearchView (below).
 
 The fly-in animation can be one of two options set using `setFlyInType(..)`.
-* `FLY_IN_OVER_ACTIVITY` brings the fly-in menu over the Activity, obscuring it. 
-* `FLY_IN_WITH_ACTIVITY` pushes the Activity's contents to the right.
+* `FLY_IN_OVER_ACTIVITY` brings the fly-in menu over the Activity, obscuring it (left screenshot). 
+* `FLY_IN_WITH_ACTIVITY` pushes the Activity's contents to the right (right screenshot).
 
 ![Fly over image](https://github.com/Espiandev/FlyInMenu/raw/master/screen_fly_over.png)![Fly with image](https://github.com/Espiandev/FlyInMenu/raw/master/screen_fly_with.png)
 
@@ -30,7 +30,7 @@ Known Issues/Upcoming features
 * Nexus 7 devices aren't supported \- the status bar will overlay the menu. This can be fixed if someone can give me the `Build.MODEL` value for the N7
 * Better styling
 * Slide\-to\-close fly\-in menu
-* \(Maybe\) a \"slide-under\" fly\-in menu, where the Activity slides over to reveal the fly-in menu
+* \(Maybe\) a "slide-under" fly\-in menu, where the Activity slides over to reveal the fly-in menu
 
 License
 =======
