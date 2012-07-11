@@ -23,6 +23,16 @@ SearchView
 -----
 You can enable a SearchView widget for the top of the FIM. After you have loaded your FIM (see above), call `enableSearchView()` on the FIM instance, which can be obtained using `getFlyInMenu()`. Once `enableSearchView()` has been called, you can retrieve and act on the SearchView with `FlyInMenu.getSearchView()`. Bear in mind, this won't work below Android 3.0, and you should place any calls dealing with the SearchView in conditional clauses.
 
+Icon guidelines
+-----
+Icons are 24x24dp and follow the icon guidelines for [Holo dark action icons](http://developer.android.com/design/style/iconography.html#action-bar). For quick reference:  
+* ldpi : 16x16px
+* mdpi : 24x24px
+* hdpi : 36x36px
+* xhdpi : 48x48px  
+
+The icon should be white with 80pc opacity. 
+
 Known Issues/Upcoming features
 ======
 
@@ -31,6 +41,7 @@ Known Issues/Upcoming features
 * Better styling
 * Slide\-to\-close fly\-in menu
 * \(Maybe\) a "slide-under" fly\-in menu, where the Activity slides over to reveal the fly-in menu
+* Support for shadows
 
 License
 =======
