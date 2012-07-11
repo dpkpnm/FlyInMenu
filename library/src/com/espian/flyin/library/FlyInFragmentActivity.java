@@ -113,4 +113,8 @@ public abstract class FlyInFragmentActivity extends FragmentActivity implements
 			super.onBackPressed();
 	}
 
+	@Override
+	public boolean onFlyInItemClick(FlyInMenuItem flyInMenuItem, int position) {
+		return true;
+	}
 }
