@@ -37,7 +37,6 @@ Known Issues/Upcoming features
 ======
 
 * The fly-in style isn't currently retained over configuration changes, fix coming soon
-* Nexus 7 devices aren't supported \- the status bar will overlay the menu. This can be fixed if someone can give me the `Build.MODEL` value for the N7
 * Better styling
 * Slide\-to\-close fly\-in menu
 * \(Maybe\) a "slide-under" fly\-in menu, where the Activity slides over to reveal the fly-in menu
