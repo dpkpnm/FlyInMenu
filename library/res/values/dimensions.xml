@@ -8,6 +8,5 @@
     <dimen name="rbm_item_image_width">24dp</dimen>
     <dimen name="rbm_item_text_size">16sp</dimen>
     <dimen name="rbm_item_text_padding_left">10dp</dimen>
-    <dimen name="status_bar_offset">25dp</dimen>
 
 </resources>

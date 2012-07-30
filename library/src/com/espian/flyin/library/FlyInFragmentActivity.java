@@ -1,12 +1,14 @@
 package com.espian.flyin.library;
 
 import android.app.Activity;
+import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.ViewGroup;
+import android.view.Window;
 
 /**
  * Wrap of the Android support library's FragmentActivity, supplying it with the
@@ -22,17 +24,34 @@ public abstract class FlyInFragmentActivity extends FragmentActivity implements
 	private FlyInMenu flyMenuView = null;
 	private boolean hasFlyMenu = false;
 
-	@Override
-	public void onCreate(Bundle saved) {
+    @Override
+    public void onCreate(Bundle saved) {
 
-		super.onCreate(saved);
-		int statusOffset = getResources().getDimensionPixelSize(
-				R.dimen.status_bar_offset);
-		flyMenuView = new FlyInMenu(this);
-		flyMenuView.setPadding(0, statusOffset, 0, 0);
-		flyMenuView.setType(FlyInMenu.FLY_IN_WITH_ACTIVITY);
+        super.onCreate(saved);
+        flyMenuView = new FlyInMenu(this);
+        flyMenuView.setType(FlyInMenu.FLY_IN_WITH_ACTIVITY);
+        flyMenuView.post(new Runnable()
+        {
+            public void run()
+            {
+                flyMenuView.setPadding(0, getStatusBarOffset(), 0, 0);
+            }
+        });
+    }
 
-	}
+    /**
+     * Retrieves the current status bar height.
+     * Note: Needs to be called from a Runnable because the layout is
+     * not initialized in onCreate() yet.
+     *
+     * @return the status bar height
+     */
+    private int getStatusBarOffset() {
+        Rect rect = new Rect();
+        Window window = getWindow();
+        window.getDecorView().getWindowVisibleDisplayFrame(rect);
+        return rect.top;
+    }
 
 	/**
 	 * Retrieves the {@link FlyInMenu} associated with this Activity
