@@ -221,7 +221,9 @@ public class FlyInMenu extends LinearLayout {
 			flyType = 0;
 		mOutsideView.setVisibility(View.VISIBLE);
 		mMenuHolder.setVisibility(View.VISIBLE);
-		mCustomView.setVisibility(View.VISIBLE);
+		if (mCustomView != null) {
+            mCustomView.setVisibility(View.VISIBLE);
+        }
 
 		ViewGroup decorView = (ViewGroup) mAct.getWindow().getDecorView();
 		View v, x;
@@ -480,8 +482,9 @@ public class FlyInMenu extends LinearLayout {
 
 			mOutsideView.setVisibility(View.GONE);
 			mMenuHolder.setVisibility(View.GONE);
-			mCustomView.setVisibility(View.GONE);
-
+			if (mCustomView != null) {
+                mCustomView.setVisibility(View.GONE);
+            }
 		}
 
 		@Override
