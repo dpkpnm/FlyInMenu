@@ -6,10 +6,10 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.Toast;
 import com.espian.flyin.library.FlyInFragmentActivity;
-import com.espian.flyin.library.FlyInMenu;
 import com.espian.flyin.library.FlyInMenuItem;
+import com.espian.flyin.library.OnFlyInItemClickListener;
 
-public class FlyInSampleActivity extends FlyInFragmentActivity {
+public class FlyInSampleActivity extends FlyInFragmentActivity implements OnFlyInItemClickListener {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -28,16 +28,13 @@ public class FlyInSampleActivity extends FlyInFragmentActivity {
 
 		});
 		getFlyInMenu().setCustomView(b);
-		getFlyInMenu().enableSearchView();
+		//getFlyInMenu().enableSearchView();
+		getFlyInMenu().setOnFlyInItemClickListener(this);
 	}
 
 	@Override
 	public boolean onFlyInItemClick(FlyInMenuItem menuItem, int position) {
 		Toast.makeText(this, menuItem.getTitle(), Toast.LENGTH_SHORT).show();
-		if (position == 2)
-			setFlyInType(FlyInMenu.FLY_IN_OVER_ACTIVITY);
-		else if (position == 0)
-			setFlyInType(FlyInMenu.FLY_IN_WITH_ACTIVITY);
 		return position != 1;
 	}
 

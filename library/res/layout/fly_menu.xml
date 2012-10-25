@@ -10,8 +10,7 @@
             android:layout_width="@dimen/rbm_menu_width"
             android:layout_height="match_parent"
             android:background="@color/rbm_menu_background"
-            android:orientation="vertical"
-            android:visibility="gone">
+            android:orientation="vertical">
 
         <ViewStub
                 android:id="@+id/fly_searchstub"
@@ -35,13 +34,5 @@
     </LinearLayout>
 
     <!-- simple drop shadow -->
-
-    <View
-            android:id="@+id/fly_outside"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:clickable="true"
-            android:visibility="gone"/>
 
 </LinearLayout>

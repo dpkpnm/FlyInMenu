@@ -7,37 +7,36 @@ import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.AttributeSet;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewStub;
+import android.view.*;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
 import android.widget.*;
-import android.widget.AdapterView.OnItemClickListener;
-import com.nineoldandroids.animation.Animator;
-import com.nineoldandroids.animation.Animator.AnimatorListener;
-import com.nineoldandroids.animation.AnimatorSet;
 import com.nineoldandroids.animation.ObjectAnimator;
 import org.xmlpull.v1.XmlPullParser;
 
 import java.util.ArrayList;
 
-public class FlyInMenu extends LinearLayout {
+public class FlyInMenu extends LinearLayout implements View.OnTouchListener, AdapterView.OnItemClickListener {
 
 	public static final int FLY_IN_WITH_ACTIVITY = 0;
+	@Deprecated
 	public static final int FLY_IN_OVER_ACTIVITY = 1;
 
 	private ListView mListView;
-	private View mOutsideView;
 	private LinearLayout mMenuHolder;
 	private ViewStub mCustomStub;
 	private View mCustomView;
 	private View mWrappedSearchView;
 	private boolean hasSearchView = false;
+	public boolean isMenuVisible = false;
 	private int flyType;
 	private int animStartFlyType;
 	private Activity mAct;
+	private float mFlyInWidth;
+	private View mActivityContentInstance;
+
+	private final Interpolator decel = AnimationUtils.loadInterpolator(getContext(),
+			android.R.anim.decelerate_interpolator);
 
 	private OnFlyInItemClickListener callback;
 
@@ -65,7 +64,6 @@ public class FlyInMenu extends LinearLayout {
 			return;
 
 		inflateLayout();
-
 		initUi();
 
 	}
@@ -84,36 +82,9 @@ public class FlyInMenu extends LinearLayout {
 	private void initUi() {
 
 		mListView = (ListView) findViewById(R.id.fly_listview);
-		mOutsideView = findViewById(R.id.fly_outside);
 		mCustomStub = (ViewStub) findViewById(R.id.fly_custom);
 		mMenuHolder = (LinearLayout) findViewById(R.id.fly_menu_holder);
-
-		mOutsideView.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				hideMenu();
-
-			}
-		});
-
-		mListView.setOnItemClickListener(new OnItemClickListener() {
-
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view,
-			                        int position, long id) {
-
-				boolean hide = true;
-				if (callback != null) {
-					hide = callback.onFlyInItemClick(menuItems.get(position),
-							position);
-				}
-
-				if (hide)
-					hideMenu();
-			}
-
-		});
+		mFlyInWidth = mAct.getResources().getDimension(R.dimen.rbm_menu_width);
 
 	}
 
@@ -169,7 +140,7 @@ public class FlyInMenu extends LinearLayout {
 	public void setCustomView(int rid) {
 		mCustomStub.setLayoutResource(rid);
 		mCustomView = mCustomStub.inflate();
-		mCustomView.setVisibility(isMenuVisible() ? View.VISIBLE : View.GONE);
+		mCustomView.setVisibility(isMenuVisible ? View.VISIBLE : View.GONE);
 		requestLayout();
 	}
 
@@ -181,7 +152,7 @@ public class FlyInMenu extends LinearLayout {
 	public void setCustomView(View view) {
 		mMenuHolder.removeView(mCustomStub);
 		mMenuHolder.addView(mCustomView = view);
-		mCustomView.setVisibility(isMenuVisible() ? View.VISIBLE : View.GONE);
+		mCustomView.setVisibility(isMenuVisible ? View.VISIBLE : View.GONE);
 		requestLayout();
 	}
 
@@ -199,7 +170,7 @@ public class FlyInMenu extends LinearLayout {
 		parseXml(menu);
 		if (menuItems != null && menuItems.size() > 0) {
 			mListView.setAdapter(new Adapter());
-
+			mListView.setOnItemClickListener(this);
 		}
 
 	}
@@ -219,72 +190,48 @@ public class FlyInMenu extends LinearLayout {
 
 		if (flyType > 1)
 			flyType = 0;
-		mOutsideView.setVisibility(View.VISIBLE);
-		mMenuHolder.setVisibility(View.VISIBLE);
-		mCustomView.setVisibility(View.VISIBLE);
 
-		ViewGroup decorView = (ViewGroup) mAct.getWindow().getDecorView();
-		View v, x;
-		v = decorView.getChildAt(0);
-		x = decorView.getChildAt(1);
+		if (mActivityContentInstance == null) {
+			mActivityContentInstance = ((ViewGroup) mAct.findViewById(android.R.id.content)).getChildAt(1);
+		}
 
-		Interpolator decel = AnimationUtils.loadInterpolator(getContext(),
-				android.R.anim.decelerate_interpolator);
-
-		ObjectAnimator flyIn = ObjectAnimator.ofFloat(x, "translationX",
-				getResources().getDimension(R.dimen.rbm_menu_width) * -1, 0);
-		ObjectAnimator activity = ObjectAnimator.ofFloat(v, "translationX", 0,
-				getResources().getDimension(R.dimen.rbm_menu_width));
-		flyIn.setInterpolator(decel);
+		ObjectAnimator activity = ObjectAnimator.ofFloat(mActivityContentInstance, "X", mFlyInWidth);
 		activity.setInterpolator(decel);
 
 		animStartFlyType = flyType;
 		if (flyType == FLY_IN_WITH_ACTIVITY) {
 
-			AnimatorSet showFlyIn = new AnimatorSet();
-			showFlyIn.playTogether(flyIn, activity);
-			showFlyIn.setDuration(300).start();
+			activity.setDuration(300).start();
 
 		} else {
 
-			flyIn.setInterpolator(decel);
-			flyIn.setDuration(300).start();
+			//flyIn.setInterpolator(decel);
+			//flyIn.setDuration(300).start();
 
 		}
+
+		isMenuVisible = true;
 
 	}
 
 	public void hideMenu() {
 
-		ViewGroup decorView = (ViewGroup) mAct.getWindow().getDecorView();
-		View v, x;
-		v = decorView.getChildAt(0);
-		x = decorView.getChildAt(1);
 
-		Interpolator decel = AnimationUtils.loadInterpolator(getContext(),
-				android.R.anim.decelerate_interpolator);
+		if (mActivityContentInstance == null) {
+			mActivityContentInstance = ((ViewGroup) mAct.findViewById(android.R.id.content)).getChildAt(1);
+		}
 
-		ObjectAnimator flyIn = ObjectAnimator.ofFloat(x, "translationX", 0,
-				getResources().getDimension(R.dimen.rbm_menu_width) * -1);
-		ObjectAnimator activity = ObjectAnimator.ofFloat(v, "translationX",
-				getResources().getDimension(R.dimen.rbm_menu_width), 0);
-		flyIn.setInterpolator(decel);
+		ObjectAnimator activity = ObjectAnimator.ofFloat(mActivityContentInstance, "X", 0);
 		activity.setInterpolator(decel);
 
 		if (animStartFlyType == FLY_IN_WITH_ACTIVITY) {
 
-			AnimatorSet showFlyIn = new AnimatorSet();
-			showFlyIn.playTogether(flyIn, activity);
-			showFlyIn.addListener(new VisibilityHelper());
-			showFlyIn.setDuration(300).start();
-
-		} else {
-
-			flyIn.setInterpolator(decel);
-			flyIn.addListener(new VisibilityHelper());
-			flyIn.setDuration(300).start();
+			activity.setDuration(300).start();
 
 		}
+
+		isMenuVisible = false;
+		mActivityContentInstance.offsetLeftAndRight(0);
 
 	}
 
@@ -293,12 +240,11 @@ public class FlyInMenu extends LinearLayout {
 	 * shown.
 	 */
 	public void toggleMenu() {
-
-		if (mOutsideView.getVisibility() == View.GONE) {
-			showMenu();
-		} else {
+		if (isMenuVisible)
 			hideMenu();
-		}
+		else
+			showMenu();
+
 	}
 
 	private void parseXml(int menu) {
@@ -335,7 +281,10 @@ public class FlyInMenu extends LinearLayout {
 						FlyInMenuItem item = new FlyInMenuItem();
 						item.setItemId(Integer.valueOf(resId.replace("@", "")));
 						item.setTitle(resourceIdToString(textId));
-						item.setIcon(Integer.valueOf(iconId.replace("@", "")));
+						if (iconId != null)
+							item.setIcon(Integer.valueOf(iconId.replace("@", "")));
+						else
+							item.setIcon(-1);
 						// item.setEnabled(Boolean.parseBoolean(enabled));
 
 						menuItems.add(item);
@@ -368,10 +317,6 @@ public class FlyInMenu extends LinearLayout {
 
 	}
 
-	public boolean isMenuVisible() {
-		return mOutsideView.getVisibility() == View.VISIBLE;
-	}
-
 	@Override
 	protected void onRestoreInstanceState(Parcelable state) {
 		SavedState ss = (SavedState) state;
@@ -388,9 +333,23 @@ public class FlyInMenu extends LinearLayout {
 		Parcelable superState = super.onSaveInstanceState();
 		SavedState ss = new SavedState(superState);
 
-		ss.bShowMenu = isMenuVisible();
+		ss.bShowMenu = isMenuVisible;
 
 		return ss;
+	}
+
+	@Override
+	public boolean onTouch(View view, MotionEvent motionEvent) {
+		return true;
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+		if (callback != null) {
+			boolean result = callback.onFlyInItemClick(menuItems.get(i), i);
+			if (result == true)
+				hideMenu();
+		}
 	}
 
 	static class SavedState extends BaseSavedState {
@@ -432,19 +391,16 @@ public class FlyInMenu extends LinearLayout {
 
 		@Override
 		public int getCount() {
-
 			return menuItems.size();
 		}
 
 		@Override
 		public Object getItem(int position) {
-
-			return null;
+			return menuItems.get(position);
 		}
 
 		@Override
 		public long getItemId(int position) {
-
 			return 0;
 		}
 
@@ -452,7 +408,7 @@ public class FlyInMenu extends LinearLayout {
 		public View getView(int position, View convertView, ViewGroup parent) {
 
 			if (convertView == null || convertView instanceof TextView)
-				convertView = inflater.inflate(R.layout.fly_item, null);
+				convertView = inflater.inflate(R.layout.fly_item_2, null);
 
 			ImageView icon = (ImageView) convertView
 					.findViewById(R.id.rbm_item_icon);
@@ -460,36 +416,14 @@ public class FlyInMenu extends LinearLayout {
 					.findViewById(R.id.rbm_item_text);
 			FlyInMenuItem item = menuItems.get(position);
 			text.setText(item.getTitle());
-			icon.setImageResource(item.getIconId());
+			if (item.getIconId() > 0)
+				icon.setImageResource(item.getIconId());
+			else
+				icon.setVisibility(View.INVISIBLE);
 			convertView.setEnabled(item.isEnabled());
 
 			return convertView;
 
-		}
-
-	}
-
-	public class VisibilityHelper implements AnimatorListener {
-
-		@Override
-		public void onAnimationStart(Animator animation) {
-		}
-
-		@Override
-		public void onAnimationEnd(Animator animation) {
-
-			mOutsideView.setVisibility(View.GONE);
-			mMenuHolder.setVisibility(View.GONE);
-			mCustomView.setVisibility(View.GONE);
-
-		}
-
-		@Override
-		public void onAnimationCancel(Animator animation) {
-		}
-
-		@Override
-		public void onAnimationRepeat(Animator animation) {
 		}
 
 	}

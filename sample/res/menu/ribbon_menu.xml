@@ -2,20 +2,19 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-            android:id="@+id/ribbon_menu_home"
-            android:icon="@drawable/cancel"
-            android:title="@string/fly_with">
+            android:id="@+id/slide_menu"
+            android:title="Item 1">
     </item>
     <item
             android:id="@+id/ribbon_menu_home2"
             android:enabled="false"
             android:icon="@drawable/collapse"
-            android:title="@string/keep_open">
+            android:title="Keep open">
     </item>
     <item
             android:id="@+id/ribbon_menu_home3"
-            android:icon="@drawable/split"
-            android:title="@string/slide_over">
+            android:icon="@drawable/fly_over"
+            android:title="Item 3">
     </item>
 
 </menu>
